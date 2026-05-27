@@ -130,7 +130,7 @@ tr.carryover-row:hover td { background: #fef9c3; }
     var v = document.getElementById('pw-input').value;
     if(v === atob('c2xhLXRyYWNrZXI=')){
       document.getElementById('pw-gate').style.display='none';
-      sessionStorage.setItem('wrt_auth','1');
+      localStorage.setItem('wrt_auth','1');
     } else {
       var el = document.getElementById('pw-error');
       el.textContent = 'Incorrect password. Try again.';
@@ -140,7 +140,7 @@ tr.carryover-row:hover td { background: #fef9c3; }
     }
   }
   window.checkPw = checkPw;
-  if(sessionStorage.getItem('wrt_auth')==='1'){
+  if(localStorage.getItem('wrt_auth')==='1'){
     document.getElementById('pw-gate').style.display='none';
   }
 })();
@@ -159,7 +159,7 @@ tr.carryover-row:hover td { background: #fef9c3; }
   </div>
 </div>
 
-<!-- MONTH TABS -->
+<!-- MONHH TABS -->
 <div class="month-nav" id="month-nav"></div>
 
 <!-- CARRYOVER BANNER -->
@@ -308,6 +308,8 @@ function getMonthOrder(monthStr) {
 
 // LOAD DATA
 async function loadData() {
+  var note = document.getElementById('refresh-note');
+  if (note) note.textContent = 'Refreshing...';
   try {
     var resp = await fetch(CSV_URL + '&t=' + Date.now());
     var text = await resp.text();
@@ -315,9 +317,10 @@ async function loadData() {
     allData = raw.map(normalizeRow).filter(function(r){ return r.ticket; });
     renderMonthTabs();
     render();
-    document.getElementById('refresh-note').textContent = 'Updated: ' +
+    if (note) note.textContent = 'Updated: ' +
       new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) + ' - Click to refresh';
   } catch (e) {
+    if (note) note.textContent = 'Error loading data - click to retry';
     document.getElementById('tbody').innerHTML =
       '<tr><td colspan="10" class="empty">Could not load data. Make sure the Sheet is shared publicly. (' + e.message + ')</td></tr>';
   }
