@@ -51,7 +51,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 
 /* TABLE */
 .table-wrap { padding: 16px 24px; overflow-x: auto; }
-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; min-width: 1100px; overflow: hidden; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; min-width: 1200px; overflow: hidden; }
 thead tr { background: #f8fafc; }
 th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e2e8f0; white-space: nowrap; cursor: pointer; user-select: none; }
 th:hover { background: #f1f5f9; }
@@ -73,12 +73,20 @@ tr.carryover-row:hover td { background: #fef9c3; }
 .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 .dot-green { background: #22c55e; }
 .dot-red { background: #ef4444; }
+.dot-gray { background: #94a3b8; }
+.dot-yellow { background: #f59e0b; }
 
 .waiting-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
 .waiting-eng { background: #fef3c7; color: #b45309; }
 .waiting-cs { background: #e0f2fe; color: #0369a1; }
 .waiting-customer { background: #f3e8ff; color: #7c3aed; }
 .waiting-na { background: #f1f5f9; color: #64748b; }
+
+/* JIRA STATUS */
+.jira-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.jira-open { background: #fee2e2; color: #dc2626; }
+.jira-closed { background: #dcfce7; color: #16a34a; }
+.jira-unknown { background: #f1f5f9; color: #64748b; }
 
 .last-comment { font-size: 11.5px; color: #374151; max-width: 260px; line-height: 1.45; }
 .last-comment .commenter { font-weight: 600; color: #1a1a2e; font-size: 11px; margin-bottom: 2px; }
@@ -94,7 +102,6 @@ tr.carryover-row:hover td { background: #fef9c3; }
 .eng-list { display: flex; flex-wrap: wrap; gap: 3px; max-width: 200px; }
 .eng-tag { background: #f1f5f9; border-radius: 4px; padding: 2px 6px; font-size: 11px; color: #475569; }
 .escalator-name { font-weight: 600; font-size: 12px; }
-.month-badge { display: inline-block; background: #e0e7ff; color: #4338ca; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-top: 2px; }
 
 .empty { text-align: center; padding: 48px; color: #94a3b8; }
 .loading { text-align: center; padding: 48px; color: #94a3b8; }
@@ -107,7 +114,7 @@ tr.carryover-row:hover td { background: #fef9c3; }
 <!-- PASSWORD GATE -->
 <div id="pw-gate" style="display:flex;align-items:center;justify-content:center;position:fixed;inset:0;background:#1e1b4b;z-index:9999;">
   <div style="background:#fff;border-radius:16px;padding:40px 36px;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-    <div style="font-size:32px;margin-bottom:12px;">ð</div>
+    <div style="font-size:32px;margin-bottom:12px;">&#128274;</div>
     <h2 style="font-size:18px;font-weight:700;color:#1e1b4b;margin-bottom:6px;">#war-room-bp Tracker</h2>
     <p style="font-size:13px;color:#64748b;margin-bottom:24px;">Enter the password to continue</p>
     <input id="pw-input" type="password" placeholder="Password" autofocus
@@ -142,13 +149,13 @@ tr.carryover-row:hover td { background: #fef9c3; }
 <!-- HEADER -->
 <div class="header">
   <div>
-    <h1>ð¨ #war-room-bp Escalation Tracker</h1>
-    <div class="meta">Jira created + engineering team actively participated Â· Live from Google Sheets Â· Auto-refreshes every 5 min</div>
+    <h1>&#128680; #war-room-bp Escalation Tracker</h1>
+    <div class="meta">Jira created + engineering team actively participated &middot; Live from Google Sheets &middot; Auto-refreshes every 5 min</div>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-    <span class="pill pill-red" id="hdr-open">â open</span>
-    <span class="pill pill-green" id="hdr-resolved">â resolved</span>
-    <span class="pill pill-total" id="hdr-total">â total</span>
+    <span class="pill pill-red" id="hdr-open">&mdash; open</span>
+    <span class="pill pill-green" id="hdr-resolved">&mdash; resolved</span>
+    <span class="pill pill-total" id="hdr-total">&mdash; total</span>
   </div>
 </div>
 
@@ -157,18 +164,19 @@ tr.carryover-row:hover td { background: #fef9c3; }
 
 <!-- CARRYOVER BANNER -->
 <div class="carryover-banner" id="carryover-banner">
-  â ï¸ <span id="carryover-text"></span>
+  &#9888; <span id="carryover-text"></span>
 </div>
 
 <!-- STATS -->
 <div class="summary">
-  <div class="stat red"><div class="label">Unresolved</div><div class="value" id="s-open">â</div></div>
-  <div class="stat green"><div class="label">Resolved</div><div class="value" id="s-res">â</div></div>
-  <div class="stat"><div class="label">Total</div><div class="value" id="s-total">â</div></div>
-  <div class="stat"><div class="label">Avg Resolve</div><div class="value" id="s-avg">â</div></div>
-  <div class="stat orange"><div class="label">Oldest Open</div><div class="value" id="s-oldest">â</div></div>
-  <div class="stat orange"><div class="label">Waiting Eng</div><div class="value" id="s-eng">â</div></div>
-  <div class="stat"><div class="label">Waiting CS</div><div class="value" id="s-cs">â</div></div>
+  <div class="stat red"><div class="label">Unresolved</div><div class="value" id="s-open">&mdash;</div></div>
+  <div class="stat green"><div class="label">Resolved</div><div class="value" id="s-res">&mdash;</div></div>
+  <div class="stat"><div class="label">Total</div><div class="value" id="s-total">&mdash;</div></div>
+  <div class="stat"><div class="label">Avg Resolve</div><div class="value" id="s-avg">&mdash;</div></div>
+  <div class="stat orange"><div class="label">Oldest Open</div><div class="value" id="s-oldest">&mdash;</div></div>
+  <div class="stat orange"><div class="label">Waiting Eng</div><div class="value" id="s-eng">&mdash;</div></div>
+  <div class="stat"><div class="label">Waiting CS</div><div class="value" id="s-cs">&mdash;</div></div>
+  <div class="stat"><div class="label">Jira Open</div><div class="value" id="s-jira-open">&mdash;</div></div>
 </div>
 
 <!-- CONTROLS -->
@@ -179,9 +187,10 @@ tr.carryover-row:hover td { background: #fef9c3; }
   <button class="filter-btn" data-filter="eng">Waiting on Eng</button>
   <button class="filter-btn" data-filter="cs">Waiting on CS</button>
   <button class="filter-btn" data-filter="customer">Waiting on Customer</button>
+  <button class="filter-btn" data-filter="jira-open">Jira Still Open</button>
   <span class="spacer"></span>
-  <span class="refresh-note" id="refresh-note" onclick="loadData()" title="Click to refresh">Updated: â</span>
-  <input id="search" type="text" placeholder="ð  Search ticket, personâ¦" oninput="render()">
+  <span class="refresh-note" id="refresh-note" onclick="loadData()" title="Click to refresh">Updated: &mdash;</span>
+  <input id="search" type="text" placeholder="Search ticket, person..." oninput="render()">
 </div>
 
 <!-- TABLE -->
@@ -189,39 +198,40 @@ tr.carryover-row:hover td { background: #fef9c3; }
   <table>
     <thead>
       <tr>
-        <th data-col="ticket">Jira Ticket â</th>
-        <th data-col="escalator">Who Escalated â</th>
-        <th data-col="engineering">Engineering Tagged â</th>
-        <th data-col="escalatedAt">Escalated At â</th>
-        <th data-col="lastUpdate">Last Update â</th>
-        <th data-col="status">Status â</th>
-        <th data-col="waiting">Waiting On â</th>
-        <th data-col="sla">Resolved At / Hrs Open â</th>
+        <th data-col="ticket">Jira Ticket ^</th>
+        <th data-col="escalator">Who Escalated ^</th>
+        <th data-col="engineering">Engineering Tagged ^</th>
+        <th data-col="escalatedAt">Escalated At ^</th>
+        <th data-col="lastUpdate">Last Update ^</th>
+        <th data-col="status">Escalation Status ^</th>
+        <th data-col="jiraStatus">Jira Status ^</th>
+        <th data-col="waiting">Waiting On ^</th>
+        <th data-col="sla">Resolved At / Hrs Open ^</th>
         <th>Last Comment</th>
       </tr>
     </thead>
-    <tbody id="tbody"><tr><td colspan="9" class="loading">Loading data from Google Sheetsâ¦</td></tr></tbody>
+    <tbody id="tbody"><tr><td colspan="10" class="loading">Loading data from Google Sheets...</td></tr></tbody>
   </table>
 </div>
 
 <script>
-// âââ CONFIG âââââââââââââââââââââââââââââââââââââââââââââââ
-const SHEET_ID = '1bKNx2OhmXbWOy_z2d38c7gH-TIVNH5lm4lahkRyF5AY';
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+// CONFIG
+var SHEET_ID = '1bKNx2OhmXbWOy_z2d38c7gH-TIVNH5lm4lahkRyF5AY';
+var CSV_URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv';
 
-// âââ STATE ââââââââââââââââââââââââââââââââââââââââââââââââ
-let allData = [];
-let activeMonthTab = 'active';
-let currentFilter = 'all';
-let sortCol = 'escalatedAt';
-let sortDir = 'desc';
+// STATE
+var allData = [];
+var activeMonthTab = 'active';
+var currentFilter = 'all';
+var sortCol = 'escalatedAt';
+var sortDir = 'desc';
 
-// âââ CSV PARSING ââââââââââââââââââââââââââââââââââââââââââ
+// CSV PARSING
 function parseCSVLine(line) {
-  const result = [];
-  let cur = '', inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
+  var result = [];
+  var cur = '', inQ = false;
+  for (var i = 0; i < line.length; i++) {
+    var c = line[i];
     if (c === '"') { inQ = !inQ; }
     else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
     else { cur += c; }
@@ -231,37 +241,41 @@ function parseCSVLine(line) {
 }
 
 function parseCSV(text) {
-  const lines = text.split('\n').filter(l => l.trim());
+  var lines = text.split('\n').filter(function(l){ return l.trim(); });
   if (lines.length < 2) return [];
-  const headers = parseCSVLine(lines[0]).map(h => h.replace(/^"|"$/g, ''));
-  return lines.slice(1).map(line => {
-    const vals = parseCSVLine(line).map(v => v.replace(/^"|"$/g, ''));
-    const row = {};
-    headers.forEach((h, i) => row[h] = vals[i] || '');
+  var headers = parseCSVLine(lines[0]).map(function(h){ return h.replace(/^"|"$/g, ''); });
+  return lines.slice(1).map(function(line) {
+    var vals = parseCSVLine(line).map(function(v){ return v.replace(/^"|"$/g, ''); });
+    var row = {};
+    headers.forEach(function(h, i){ row[h] = vals[i] || ''; });
     return row;
   });
 }
 
-// âââ DATE PARSING âââââââââââââââââââââââââââââââââââââââââ
-// Input: "2026-05-20 11:42 AM" (EDT)
+// DATE PARSING - Input: "2026-05-20 11:42 AM" (EDT)
 function parseDate(str) {
   if (!str || !str.trim()) return null;
-  const m = str.match(/(\d{4})-(\d{2})-(\d{2})\s+(\d+):(\d+)\s+(AM|PM)/i);
+  var m = str.match(/(\d{4})-(\d{2})-(\d{2})\s+(\d+):(\d+)\s+(AM|PM)/i);
   if (!m) return null;
-  let h = parseInt(m[4]), min = parseInt(m[5]);
+  var h = parseInt(m[4]), min = parseInt(m[5]);
   if (m[6].toUpperCase() === 'PM' && h !== 12) h += 12;
   if (m[6].toUpperCase() === 'AM' && h === 12) h = 0;
-  // EDT = UTC-4; store as UTC for correct elapsed calculation
+  // EDT = UTC-4
   return new Date(Date.UTC(+m[1], +m[2]-1, +m[3], h+4, min));
 }
 
-// âââ NORMALIZE DATA âââââââââââââââââââââââââââââââââââââââ
+// NORMALIZE DATA
 function normalizeRow(r) {
-  const waiting = (r['Waiting On'] || '').toLowerCase();
-  let waitingNorm = 'n/a';
+  var waiting = (r['Waiting On'] || '').toLowerCase();
+  var waitingNorm = 'n/a';
   if (waiting === 'engineering') waitingNorm = 'eng';
   else if (waiting === 'cs team') waitingNorm = 'cs';
   else if (waiting === 'customer') waitingNorm = 'customer';
+
+  var jiraStatus = (r['Jira Status'] || '').toLowerCase().trim();
+  var jiraNorm = 'unknown';
+  if (jiraStatus === 'open') jiraNorm = 'open';
+  else if (jiraStatus === 'closed' || jiraStatus === 'done' || jiraStatus === 'resolved') jiraNorm = 'closed';
 
   return {
     month: r['Month'] || '',
@@ -269,10 +283,11 @@ function normalizeRow(r) {
     url: r['Jira URL'] || '',
     summary: r['Summary'] || '',
     escalator: r['Who Escalated'] || '',
-    engineering: (r['Engineering Tagged'] || '').split(',').map(s => s.trim()).filter(Boolean),
+    engineering: (r['Engineering Tagged'] || '').split(',').map(function(s){ return s.trim(); }).filter(Boolean),
     escalatedAt: parseDate(r['Escalated At (EDT)']),
     lastUpdate: parseDate(r['Last Update (EDT)']),
     status: (r['Status'] || '').toLowerCase(),
+    jiraStatus: jiraNorm,
     waiting: waitingNorm,
     resolvedAt: parseDate(r['Resolved At (EDT)']),
     resolveInfo: r['Resolve Time / Hrs Open'] || '',
@@ -281,51 +296,50 @@ function normalizeRow(r) {
   };
 }
 
-// âââ CURRENT MONTH ââââââââââââââââââââââââââââââââââââââââ
+// CURRENT MONTH
 function getCurrentMonth() {
-  return new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' }); // "May 2026"
+  return new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
 }
 
 function getMonthOrder(monthStr) {
-  // Returns a sortable number for a month string like "May 2026"
-  const d = new Date(monthStr + ' 1');
+  var d = new Date(monthStr + ' 1');
   return isNaN(d) ? 0 : d.getTime();
 }
 
-// âââ LOAD DATA ââââââââââââââââââââââââââââââââââââââââââââ
+// LOAD DATA
 async function loadData() {
   try {
-    const resp = await fetch(CSV_URL + '&t=' + Date.now());
-    const text = await resp.text();
-    const raw = parseCSV(text);
-    allData = raw.map(normalizeRow).filter(r => r.ticket);
+    var resp = await fetch(CSV_URL + '&t=' + Date.now());
+    var text = await resp.text();
+    var raw = parseCSV(text);
+    allData = raw.map(normalizeRow).filter(function(r){ return r.ticket; });
     renderMonthTabs();
     render();
     document.getElementById('refresh-note').textContent = 'Updated: ' +
-      new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) + ' Â· Click to refresh';
+      new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) + ' - Click to refresh';
   } catch (e) {
     document.getElementById('tbody').innerHTML =
-      `<tr><td colspan="9" class="empty">â ï¸ Could not load data. Make sure the Sheet is shared publicly. (${e.message})</td></tr>`;
+      '<tr><td colspan="10" class="empty">Could not load data. Make sure the Sheet is shared publicly. (' + e.message + ')</td></tr>';
   }
 }
 
-// âââ MONTH TABS âââââââââââââââââââââââââââââââââââââââââââ
+// MONTH TABS
 function renderMonthTabs() {
-  const currentMonth = getCurrentMonth();
-  const months = [...new Set(allData.map(r => r.month))].filter(Boolean)
-    .sort((a, b) => getMonthOrder(a) - getMonthOrder(b));
+  var currentMonth = getCurrentMonth();
+  var months = [];
+  var seen = {};
+  allData.forEach(function(r){ if (r.month && !seen[r.month]) { seen[r.month] = true; months.push(r.month); } });
+  months.sort(function(a, b){ return getMonthOrder(a) - getMonthOrder(b); });
 
-  // Count carryover (unresolved from past months)
-  const carryoverCount = allData.filter(r => r.month !== currentMonth && r.status === 'unresolved').length;
+  var carryoverCount = allData.filter(function(r){ return r.month !== currentMonth && r.status === 'unresolved'; }).length;
 
-  let html = `<div class="month-tab ${activeMonthTab === 'active' ? 'active' : ''}" onclick="setMonthTab('active')">
-    ð´ Active${carryoverCount > 0 ? `<span class="carryover-dot"></span>` : ''}
-  </div>`;
+  var html = '<div class="month-tab ' + (activeMonthTab === 'active' ? 'active' : '') + '" onclick="setMonthTab(\'active\')">' +
+    'Active' + (carryoverCount > 0 ? '<span class="carryover-dot"></span>' : '') +
+    '</div>';
 
-  months.forEach(m => {
-    const isCurrentMonth = m === currentMonth;
-    const label = isCurrentMonth ? `${m} (current)` : m;
-    html += `<div class="month-tab ${activeMonthTab === m ? 'active' : ''}" onclick="setMonthTab('${m}')">${label}</div>`;
+  months.forEach(function(m) {
+    var label = (m === currentMonth) ? m + ' (current)' : m;
+    html += '<div class="month-tab ' + (activeMonthTab === m ? 'active' : '') + '" onclick="setMonthTab(\'' + m + '\')">' + label + '</div>';
   });
 
   document.getElementById('month-nav').innerHTML = html;
@@ -334,90 +348,96 @@ function renderMonthTabs() {
 function setMonthTab(tab) {
   activeMonthTab = tab;
   currentFilter = 'all';
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
   document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
   document.getElementById('search').value = '';
   renderMonthTabs();
   render();
 }
 
-// âââ GET VIEW DATA ââââââââââââââââââââââââââââââââââââââââ
+// GET VIEW DATA
 function getViewData() {
-  const currentMonth = getCurrentMonth();
+  var currentMonth = getCurrentMonth();
   if (activeMonthTab === 'active') {
-    // All tickets from current month + unresolved from previous months
-    return allData.filter(r => r.month === currentMonth || r.status === 'unresolved');
+    return allData.filter(function(r){ return r.month === currentMonth || r.status === 'unresolved'; });
   } else {
-    return allData.filter(r => r.month === activeMonthTab);
+    return allData.filter(function(r){ return r.month === activeMonthTab; });
   }
 }
 
-// âââ FORMATTING âââââââââââââââââââââââââââââââââââââââââââ
+// FORMATTING
 function fmt(d) {
-  if (!d) return 'â';
+  if (!d) return '&mdash;';
   return d.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'America/New_York' }) + ' EDT';
 }
 function elapsed(d) {
   if (!d) return '';
-  const ms = Date.now() - d.getTime();
-  const m = Math.floor(ms / 60000);
+  var ms = Date.now() - d.getTime();
+  var m = Math.floor(ms / 60000);
   if (m < 60) return m + 'm ago';
-  const h = ms / 3600000;
+  var h = ms / 3600000;
   if (h < 24) return h.toFixed(1) + 'h ago';
-  const days = Math.floor(h/24), rem = Math.round(h%24);
-  return `${days}d ${rem}h ago`;
+  var days = Math.floor(h/24), rem = Math.round(h%24);
+  return days + 'd ' + rem + 'h ago';
 }
 function duration(a, b) {
   if (!a || !b) return '';
-  const h = Math.abs(b - a) / 3600000;
+  var h = Math.abs(b - a) / 3600000;
   if (h < 0.1) return Math.round(Math.abs(b-a)/60000)+'min';
   if (h < 24) return h.toFixed(1)+'h';
-  const d = Math.floor(h/24), r = Math.round(h%24);
-  return `${d}d ${r}h`;
+  var d = Math.floor(h/24), r = Math.round(h%24);
+  return d+'d '+r+'h';
 }
 function hrsOpen(d) { return d ? Math.round((Date.now() - d.getTime()) / 3600000) : 0; }
 function hrsBadge(h) {
-  if (h > 72) return `<span class="hrs-badge hrs-critical">${h}h open</span>`;
-  if (h > 24) return `<span class="hrs-badge hrs-warn">${h}h open</span>`;
-  return `<span class="hrs-badge hrs-ok">${h}h open</span>`;
+  if (h > 72) return '<span class="hrs-badge hrs-critical">'+h+'h open</span>';
+  if (h > 24) return '<span class="hrs-badge hrs-warn">'+h+'h open</span>';
+  return '<span class="hrs-badge hrs-ok">'+h+'h open</span>';
 }
 function waitingBadge(w) {
-  if (w === 'eng') return `<span class="waiting-badge waiting-eng">â¡ï¸ Engineering</span>`;
-  if (w === 'cs') return `<span class="waiting-badge waiting-cs">ð¤ CS Team</span>`;
-  if (w === 'customer') return `<span class="waiting-badge waiting-customer">ð Customer</span>`;
-  return `<span class="waiting-badge waiting-na">â</span>`;
+  if (w === 'eng') return '<span class="waiting-badge waiting-eng">Eng</span>';
+  if (w === 'cs') return '<span class="waiting-badge waiting-cs">CS Team</span>';
+  if (w === 'customer') return '<span class="waiting-badge waiting-customer">Customer</span>';
+  return '<span class="waiting-badge waiting-na">&mdash;</span>';
+}
+function jiraStatusBadge(j) {
+  if (j === 'open') return '<span class="jira-badge jira-open"><span class="dot dot-red"></span>Open</span>';
+  if (j === 'closed') return '<span class="jira-badge jira-closed"><span class="dot dot-green"></span>Closed</span>';
+  return '<span class="jira-badge jira-unknown"><span class="dot dot-gray"></span>Unknown</span>';
 }
 
-// âââ RENDER âââââââââââââââââââââââââââââââââââââââââââââââ
+// RENDER
 function render() {
-  const currentMonth = getCurrentMonth();
-  const q = document.getElementById('search').value.toLowerCase();
-  let rows = getViewData().filter(e => {
+  var currentMonth = getCurrentMonth();
+  var q = document.getElementById('search').value.toLowerCase();
+  var rows = getViewData().filter(function(e) {
     if (currentFilter === 'unresolved' && e.status !== 'unresolved') return false;
     if (currentFilter === 'resolved' && e.status !== 'resolved') return false;
     if (currentFilter === 'eng' && e.waiting !== 'eng') return false;
     if (currentFilter === 'cs' && e.waiting !== 'cs') return false;
     if (currentFilter === 'customer' && e.waiting !== 'customer') return false;
+    if (currentFilter === 'jira-open' && e.jiraStatus !== 'open') return false;
     if (q) {
-      const hay = [e.ticket, e.escalator, e.engineering.join(' '), e.summary, e.lastComment, e.lastCommenter, e.month].join(' ').toLowerCase();
+      var hay = [e.ticket, e.escalator, e.engineering.join(' '), e.summary, e.lastComment, e.lastCommenter, e.month].join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
   });
 
   // Sort
-  rows.sort((a, b) => {
-    let va, vb;
+  rows.sort(function(a, b) {
+    var va, vb;
     if (sortCol === 'ticket') { va = a.ticket; vb = b.ticket; }
     else if (sortCol === 'escalator') { va = a.escalator; vb = b.escalator; }
     else if (sortCol === 'engineering') { va = a.engineering[0]||''; vb = b.engineering[0]||''; }
-    else if (sortCol === 'escalatedAt') { va = a.escalatedAt?.getTime()||0; vb = b.escalatedAt?.getTime()||0; }
-    else if (sortCol === 'lastUpdate') { va = a.lastUpdate?.getTime()||0; vb = b.lastUpdate?.getTime()||0; }
+    else if (sortCol === 'escalatedAt') { va = a.escalatedAt ? a.escalatedAt.getTime() : 0; vb = b.escalatedAt ? b.escalatedAt.getTime() : 0; }
+    else if (sortCol === 'lastUpdate') { va = a.lastUpdate ? a.lastUpdate.getTime() : 0; vb = b.lastUpdate ? b.lastUpdate.getTime() : 0; }
     else if (sortCol === 'status') { va = a.status; vb = b.status; }
+    else if (sortCol === 'jiraStatus') { va = a.jiraStatus; vb = b.jiraStatus; }
     else if (sortCol === 'waiting') { va = a.waiting; vb = b.waiting; }
     else if (sortCol === 'sla') {
-      va = a.resolvedAt ? (a.resolvedAt - a.escalatedAt) : (Date.now() - (a.escalatedAt?.getTime()||0));
-      vb = b.resolvedAt ? (b.resolvedAt - b.escalatedAt) : (Date.now() - (b.escalatedAt?.getTime()||0));
+      va = a.resolvedAt ? (a.resolvedAt - a.escalatedAt) : (Date.now() - (a.escalatedAt ? a.escalatedAt.getTime() : 0));
+      vb = b.resolvedAt ? (b.resolvedAt - b.escalatedAt) : (Date.now() - (b.escalatedAt ? b.escalatedAt.getTime() : 0));
     }
     if (va < vb) return sortDir === 'asc' ? -1 : 1;
     if (va > vb) return sortDir === 'asc' ? 1 : -1;
@@ -426,11 +446,12 @@ function render() {
 
   // Carryover banner
   if (activeMonthTab === 'active') {
-    const carryover = rows.filter(r => r.month !== currentMonth);
-    const banner = document.getElementById('carryover-banner');
+    var carryover = rows.filter(function(r){ return r.month !== currentMonth; });
+    var banner = document.getElementById('carryover-banner');
     if (carryover.length > 0) {
       document.getElementById('carryover-text').textContent =
-        `${carryover.length} unresolved ticket${carryover.length > 1 ? 's' : ''} carried over from previous month${carryover.length > 1 ? 's' : ''} â highlighted below`;
+        carryover.length + ' unresolved ticket' + (carryover.length > 1 ? 's' : '') +
+        ' carried over from previous month' + (carryover.length > 1 ? 's' : '') + ' - highlighted below';
       banner.classList.add('show');
     } else {
       banner.classList.remove('show');
@@ -439,87 +460,90 @@ function render() {
     document.getElementById('carryover-banner').classList.remove('show');
   }
 
-  const tbody = document.getElementById('tbody');
+  var tbody = document.getElementById('tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="9" class="empty">No escalations match your filter.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" class="empty">No escalations match your filter.</td></tr>';
     updateStats([]);
     return;
   }
 
-  tbody.innerHTML = rows.map(e => {
-    const isRes = e.status === 'resolved';
-    const isCarryover = activeMonthTab === 'active' && e.month !== currentMonth;
-    const hrs = e.escalatedAt ? hrsOpen(e.escalatedAt) : 0;
-    const slaCell = isRes
+  tbody.innerHTML = rows.map(function(e) {
+    var isRes = e.status === 'resolved';
+    var isCarryover = activeMonthTab === 'active' && e.month !== currentMonth;
+    var hrs = e.escalatedAt ? hrsOpen(e.escalatedAt) : 0;
+    var slaCell = isRes
       ? (e.resolvedAt
-          ? `<div class="time-main">${fmt(e.resolvedAt)}</div><div class="time-sub">Resolved in ${duration(e.escalatedAt, e.resolvedAt)}</div>`
-          : `<div class="time-sub">${e.resolveInfo || 'â'}</div>`)
+          ? '<div class="time-main">'+fmt(e.resolvedAt)+'</div><div class="time-sub">Resolved in '+duration(e.escalatedAt, e.resolvedAt)+'</div>'
+          : '<div class="time-sub">'+(e.resolveInfo || '&mdash;')+'</div>')
       : hrsBadge(hrs);
-    const engHtml = e.engineering.map(n => `<span class="eng-tag">${n}</span>`).join('');
-    const monthBadge = isCarryover ? `<div class="carryover-tag">â© from ${e.month}</div>` : '';
+    var engHtml = e.engineering.map(function(n){ return '<span class="eng-tag">'+n+'</span>'; }).join('');
+    var monthBadge = isCarryover ? '<div class="carryover-tag">&larr; from '+e.month+'</div>' : '';
 
-    return `<tr class="${isCarryover ? 'carryover-row' : ''}">
-      <td><a href="${e.url}" target="_blank" class="ticket-link">${e.ticket}</a><div class="summary-text">${e.summary}</div>${monthBadge}</td>
-      <td><span class="escalator-name">${e.escalator}</span></td>
-      <td><div class="eng-list">${engHtml}</div></td>
-      <td><div class="time-main">${fmt(e.escalatedAt)}</div><div class="time-sub">${elapsed(e.escalatedAt)}</div></td>
-      <td><div class="time-main">${fmt(e.lastUpdate)}</div><div class="time-sub">${elapsed(e.lastUpdate)}</div></td>
-      <td><span class="status-badge ${isRes ? 'status-resolved' : 'status-unresolved'}"><span class="dot ${isRes ? 'dot-green' : 'dot-red'}"></span>${isRes ? 'Resolved' : 'Unresolved'}</span></td>
-      <td>${waitingBadge(e.waiting)}</td>
-      <td>${slaCell}</td>
-      <td><div class="last-comment"><div class="commenter">${e.lastCommenter}</div><div class="text">"${e.lastComment}"</div></div></td>
-    </tr>`;
+    return '<tr class="'+(isCarryover ? 'carryover-row' : '')+'">' +
+      '<td><a href="'+e.url+'" target="_blank" class="ticket-link">'+e.ticket+'</a><div class="summary-text">'+e.summary+'</div>'+monthBadge+'</td>' +
+      '<td><span class="escalator-name">'+e.escalator+'</span></td>' +
+      '<td><div class="eng-list">'+engHtml+'</div></td>' +
+      '<td><div class="time-main">'+fmt(e.escalatedAt)+'</div><div class="time-sub">'+elapsed(e.escalatedAt)+'</div></td>' +
+      '<td><div class="time-main">'+fmt(e.lastUpdate)+'</div><div class="time-sub">'+elapsed(e.lastUpdate)+'</div></td>' +
+      '<td><span class="status-badge '+(isRes ? 'status-resolved' : 'status-unresolved')+'"><span class="dot '+(isRes ? 'dot-green' : 'dot-red')+'"></span>'+(isRes ? 'Resolved' : 'Unresolved')+'</span></td>' +
+      '<td>'+jiraStatusBadge(e.jiraStatus)+'</td>' +
+      '<td>'+waitingBadge(e.waiting)+'</td>' +
+      '<td>'+slaCell+'</td>' +
+      '<td><div class="last-comment"><div class="commenter">'+e.lastCommenter+'</div><div class="text">&ldquo;'+e.lastComment+'&rdquo;</div></div></td>' +
+      '</tr>';
   }).join('');
 
   updateStats(rows);
 }
 
 function updateStats(rows) {
-  const open = rows.filter(e => e.status === 'unresolved').length;
-  const res = rows.filter(e => e.status === 'resolved').length;
-  const total = rows.length;
-  const eng = rows.filter(e => e.waiting === 'eng').length;
-  const cs = rows.filter(e => e.waiting === 'cs').length;
-  const resolved = rows.filter(e => e.resolvedAt && e.escalatedAt);
-  const avgH = resolved.length ? resolved.reduce((s,e) => s + (e.resolvedAt - e.escalatedAt), 0) / resolved.length / 3600000 : 0;
-  const oldest = rows.filter(e => e.status === 'unresolved' && e.escalatedAt).reduce((m,e) => Math.max(m, hrsOpen(e.escalatedAt)), 0);
+  var open = rows.filter(function(e){ return e.status === 'unresolved'; }).length;
+  var res = rows.filter(function(e){ return e.status === 'resolved'; }).length;
+  var total = rows.length;
+  var eng = rows.filter(function(e){ return e.waiting === 'eng'; }).length;
+  var cs = rows.filter(function(e){ return e.waiting === 'cs'; }).length;
+  var jiraOpen = rows.filter(function(e){ return e.jiraStatus === 'open'; }).length;
+  var resolved = rows.filter(function(e){ return e.resolvedAt && e.escalatedAt; });
+  var avgH = resolved.length ? resolved.reduce(function(s,e){ return s + (e.resolvedAt - e.escalatedAt); }, 0) / resolved.length / 3600000 : 0;
+  var oldest = rows.filter(function(e){ return e.status === 'unresolved' && e.escalatedAt; }).reduce(function(m,e){ return Math.max(m, hrsOpen(e.escalatedAt)); }, 0);
 
   document.getElementById('s-open').textContent = open;
   document.getElementById('s-res').textContent = res;
   document.getElementById('s-total').textContent = total;
-  document.getElementById('s-avg').textContent = avgH ? (avgH < 24 ? avgH.toFixed(1)+'h' : (avgH/24).toFixed(1)+'d') : 'â';
-  document.getElementById('s-oldest').textContent = oldest ? oldest+'h' : 'â';
+  document.getElementById('s-avg').textContent = avgH ? (avgH < 24 ? avgH.toFixed(1)+'h' : (avgH/24).toFixed(1)+'d') : '--';
+  document.getElementById('s-oldest').textContent = oldest ? oldest+'h' : '--';
   document.getElementById('s-eng').textContent = eng;
   document.getElementById('s-cs').textContent = cs;
+  document.getElementById('s-jira-open').textContent = jiraOpen;
   document.getElementById('hdr-open').textContent = open + ' open';
   document.getElementById('hdr-resolved').textContent = res + ' resolved';
   document.getElementById('hdr-total').textContent = total + ' total';
 }
 
-// âââ EVENTS âââââââââââââââââââââââââââââââââââââââââââââââ
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
+// EVENTS
+document.querySelectorAll('.filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
     currentFilter = btn.dataset.filter;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active');
     render();
   });
 });
 
-document.querySelectorAll('th[data-col]').forEach(th => {
-  th.addEventListener('click', () => {
-    const col = th.dataset.col;
+document.querySelectorAll('th[data-col]').forEach(function(th) {
+  th.addEventListener('click', function() {
+    var col = th.dataset.col;
     if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
     else { sortCol = col; sortDir = 'desc'; }
-    document.querySelectorAll('th').forEach(t => t.classList.remove('active-sort'));
+    document.querySelectorAll('th').forEach(function(t){ t.classList.remove('active-sort'); });
     th.classList.add('active-sort');
     render();
   });
 });
 
-// âââ INIT âââââââââââââââââââââââââââââââââââââââââââââââââ
+// INIT
 loadData();
-setInterval(loadData, 300000); // refresh every 5 minutes
+setInterval(loadData, 300000);
 </script>
 </body>
 </html>
