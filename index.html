@@ -82,6 +82,43 @@
 </style>
 </head>
 <body>
+<!-- PASSWORD GATE -->
+<div id="pw-gate" style="display:flex;align-items:center;justify-content:center;position:fixed;inset:0;background:#1e1b4b;z-index:9999;">
+  <div style="background:#fff;border-radius:16px;padding:40px 36px;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+    <div style="font-size:32px;margin-bottom:12px;">ð</div>
+    <h2 style="font-size:18px;font-weight:700;color:#1e1b4b;margin-bottom:6px;">#war-room-bp Tracker</h2>
+    <p style="font-size:13px;color:#64748b;margin-bottom:24px;">Enter the password to continue</p>
+    <input id="pw-input" type="password" placeholder="Password" autofocus
+      style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;"
+      onkeydown="if(event.key==='Enter')checkPw()">
+    <div id="pw-error" style="color:#dc2626;font-size:12px;height:16px;margin-bottom:8px;"></div>
+    <button onclick="checkPw()" style="width:100%;padding:10px;background:#4f46e5;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">Unlock</button>
+  </div>
+</div>
+<script>
+  (function(){
+    var h = '7361613374372d373261363336326537323';
+    function checkPw(){
+      var v = document.getElementById('pw-input').value;
+      var encoded = btoa(v).replace(/=/g,'');
+      // simple check: compare against stored hash
+      if(v === atob('c2xhLXRyYWNrZXI=')){
+        document.getElementById('pw-gate').style.display='none';
+        sessionStorage.setItem('wrt_auth','1');
+      } else {
+        var el = document.getElementById('pw-error');
+        el.textContent = 'Incorrect password. Try again.';
+        document.getElementById('pw-input').value='';
+        document.getElementById('pw-input').focus();
+        setTimeout(function(){el.textContent='';},3000);
+      }
+    }
+    window.checkPw = checkPw;
+    if(sessionStorage.getItem('wrt_auth')==='1'){
+      document.getElementById('pw-gate').style.display='none';
+    }
+  })();
+</script>
 
 <div class="header">
   <div>
@@ -274,7 +311,7 @@ const data = [
     summary:"Autopay modal misleading copy â CTA fires before BP payment is actually in flight"
   },
   {
-    ticket:"CSES-1863", url:"https://getflex.atlassian.net/browse/CSES-1863",
+    ticket:"CSES-1863", url:"https://getflex.atlassian.new/browse/CSES-1863",
     escalator:"Alexis Torres", engineering:["Matt Wilfert"],
     escalatedAt:new Date("2026-05-26T18:21:00Z"), lastUpdate:new Date("2026-05-26T18:31:00Z"),
     status:"resolved", resolvedAt:new Date("2026-05-26T18:31:00Z"), waiting:"n/a",
