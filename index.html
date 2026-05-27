@@ -5,83 +5,105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>#war-room-bp Escalation Tracker</title>
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f7f8fa; color: #1a1a2e; font-size: 13px; }
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f7f8fa; color: #1a1a2e; font-size: 13px; }
 
-  .header { background: #1e1b4b; color: #fff; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-  .header h1 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-  .header .meta { font-size: 12px; color: #a5b4fc; margin-top: 3px; }
-  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
-  .pill-red { background: #fee2e2; color: #dc2626; }
-  .pill-green { background: #dcfce7; color: #16a34a; }
-  .pill-total { background: #e0e7ff; color: #4338ca; }
+/* HEADER */
+.header { background: #1e1b4b; color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.header h1 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.header .meta { font-size: 11px; color: #a5b4fc; margin-top: 3px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.pill-red { background: #fee2e2; color: #dc2626; }
+.pill-green { background: #dcfce7; color: #16a34a; }
+.pill-total { background: #e0e7ff; color: #4338ca; }
 
-  .summary { display: flex; gap: 12px; padding: 14px 24px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
-  .stat { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 16px; min-width: 120px; }
-  .stat .label { font-size: 11px; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
-  .stat .value { font-size: 22px; font-weight: 700; margin-top: 2px; color: #1a1a2e; }
-  .stat.red .value { color: #dc2626; }
-  .stat.green .value { color: #16a34a; }
-  .stat.orange .value { color: #d97706; }
+/* MONTH TABS */
+.month-nav { background: #1e1b4b; border-top: 1px solid rgba(255,255,255,0.1); padding: 0 24px; display: flex; gap: 0; overflow-x: auto; }
+.month-tab { padding: 10px 18px; font-size: 12px; font-weight: 600; color: #a5b4fc; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.15s; user-select: none; }
+.month-tab:hover { color: #fff; }
+.month-tab.active { color: #fff; border-bottom-color: #818cf8; }
+.month-tab .carryover-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #f87171; margin-left: 5px; vertical-align: middle; }
 
-  .controls { display: flex; gap: 8px; padding: 10px 24px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; align-items: center; }
-  .filter-btn { padding: 5px 14px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-size: 12px; color: #475569; font-weight: 500; transition: all 0.15s; }
-  .filter-btn.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
-  .filter-btn:hover:not(.active) { background: #f1f5f9; }
-  .spacer { flex: 1; }
-  #search { padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; outline: none; width: 220px; }
-  #search:focus { border-color: #4f46e5; }
-  .refresh-note { font-size: 11px; color: #94a3b8; }
+/* SUMMARY STATS */
+.summary { display: flex; gap: 12px; padding: 14px 24px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
+.stat { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 16px; min-width: 110px; }
+.stat .label { font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.stat .value { font-size: 22px; font-weight: 700; margin-top: 2px; color: #1a1a2e; }
+.stat.red .value { color: #dc2626; }
+.stat.green .value { color: #16a34a; }
+.stat.orange .value { color: #d97706; }
 
-  .table-wrap { padding: 16px 24px; overflow-x: auto; }
-  table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; min-width: 1100px; overflow: hidden; }
-  thead tr { background: #f8fafc; }
-  th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e2e8f0; white-space: nowrap; cursor: pointer; user-select: none; }
-  th:hover { background: #f1f5f9; }
-  th.active-sort { color: #4f46e5; }
-  td { padding: 11px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; line-height: 1.45; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: #fafbff; }
+/* CARRYOVER BANNER */
+.carryover-banner { background: #fff7ed; border-bottom: 1px solid #fed7aa; padding: 8px 24px; font-size: 12px; color: #92400e; display: none; align-items: center; gap: 6px; }
+.carryover-banner.show { display: flex; }
 
-  .ticket-link { color: #4f46e5; text-decoration: none; font-weight: 700; font-size: 12.5px; }
-  .ticket-link:hover { text-decoration: underline; }
-  .summary-text { font-size: 11px; color: #64748b; margin-top: 3px; max-width: 210px; line-height: 1.4; }
+/* CONTROLS */
+.controls { display: flex; gap: 8px; padding: 10px 24px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; align-items: center; }
+.filter-btn { padding: 5px 14px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-size: 12px; color: #475569; font-weight: 500; transition: all 0.15s; }
+.filter-btn.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+.filter-btn:hover:not(.active) { background: #f1f5f9; }
+.spacer { flex: 1; }
+#search { padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; outline: none; width: 220px; }
+#search:focus { border-color: #4f46e5; }
+.refresh-note { font-size: 11px; color: #94a3b8; cursor: pointer; }
+.refresh-note:hover { color: #4f46e5; }
 
-  .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .status-resolved { background: #dcfce7; color: #16a34a; }
-  .status-unresolved { background: #fee2e2; color: #dc2626; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-  .dot-green { background: #22c55e; }
-  .dot-red { background: #ef4444; }
+/* TABLE */
+.table-wrap { padding: 16px 24px; overflow-x: auto; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; min-width: 1100px; overflow: hidden; }
+thead tr { background: #f8fafc; }
+th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e2e8f0; white-space: nowrap; cursor: pointer; user-select: none; }
+th:hover { background: #f1f5f9; }
+th.active-sort { color: #4f46e5; }
+td { padding: 11px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; line-height: 1.45; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafbff; }
+tr.carryover-row td { background: #fffbeb; }
+tr.carryover-row:hover td { background: #fef9c3; }
 
-  .waiting-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .waiting-eng { background: #fef3c7; color: #b45309; }
-  .waiting-cs { background: #e0f2fe; color: #0369a1; }
-  .waiting-customer { background: #f3e8ff; color: #7c3aed; }
-  .waiting-na { background: #f1f5f9; color: #64748b; }
+.ticket-link { color: #4f46e5; text-decoration: none; font-weight: 700; font-size: 12.5px; }
+.ticket-link:hover { text-decoration: underline; }
+.summary-text { font-size: 11px; color: #64748b; margin-top: 3px; max-width: 210px; line-height: 1.4; }
+.carryover-tag { display: inline-block; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 4px; margin-top: 3px; }
 
-  .last-comment { font-size: 11.5px; color: #374151; max-width: 260px; line-height: 1.45; }
-  .last-comment .commenter { font-weight: 600; color: #1a1a2e; font-size: 11px; margin-bottom: 2px; }
-  .last-comment .text { font-style: italic; color: #4b5563; }
+.status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.status-resolved { background: #dcfce7; color: #16a34a; }
+.status-unresolved { background: #fee2e2; color: #dc2626; }
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.dot-green { background: #22c55e; }
+.dot-red { background: #ef4444; }
 
-  .time-main { font-size: 12px; color: #374151; white-space: nowrap; }
-  .time-sub { font-size: 11px; color: #94a3b8; margin-top: 1px; }
-  .hrs-badge { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600; }
-  .hrs-critical { background: #fee2e2; color: #dc2626; }
-  .hrs-warn { background: #fef3c7; color: #b45309; }
-  .hrs-ok { background: #dcfce7; color: #16a34a; }
+.waiting-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.waiting-eng { background: #fef3c7; color: #b45309; }
+.waiting-cs { background: #e0f2fe; color: #0369a1; }
+.waiting-customer { background: #f3e8ff; color: #7c3aed; }
+.waiting-na { background: #f1f5f9; color: #64748b; }
 
-  .eng-list { display: flex; flex-wrap: wrap; gap: 3px; max-width: 200px; }
-  .eng-tag { background: #f1f5f9; border-radius: 4px; padding: 2px 6px; font-size: 11px; color: #475569; }
-  .escalator-name { font-weight: 600; font-size: 12px; }
+.last-comment { font-size: 11.5px; color: #374151; max-width: 260px; line-height: 1.45; }
+.last-comment .commenter { font-weight: 600; color: #1a1a2e; font-size: 11px; margin-bottom: 2px; }
+.last-comment .text { font-style: italic; color: #4b5563; }
 
-  .empty { text-align: center; padding: 48px; color: #94a3b8; }
+.time-main { font-size: 12px; color: #374151; white-space: nowrap; }
+.time-sub { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+.hrs-badge { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+.hrs-critical { background: #fee2e2; color: #dc2626; }
+.hrs-warn { background: #fef3c7; color: #b45309; }
+.hrs-ok { background: #dcfce7; color: #16a34a; }
 
-  @media (max-width: 768px) { .table-wrap { padding: 8px; } }
+.eng-list { display: flex; flex-wrap: wrap; gap: 3px; max-width: 200px; }
+.eng-tag { background: #f1f5f9; border-radius: 4px; padding: 2px 6px; font-size: 11px; color: #475569; }
+.escalator-name { font-weight: 600; font-size: 12px; }
+.month-badge { display: inline-block; background: #e0e7ff; color: #4338ca; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-top: 2px; }
+
+.empty { text-align: center; padding: 48px; color: #94a3b8; }
+.loading { text-align: center; padding: 48px; color: #94a3b8; }
+
+@media (max-width: 768px) { .table-wrap { padding: 8px; } }
 </style>
 </head>
 <body>
+
 <!-- PASSWORD GATE -->
 <div id="pw-gate" style="display:flex;align-items:center;justify-content:center;position:fixed;inset:0;background:#1e1b4b;z-index:9999;">
   <div style="background:#fff;border-radius:16px;padding:40px 36px;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
@@ -96,34 +118,32 @@
   </div>
 </div>
 <script>
-  (function(){
-    var h = '7361613374372d373261363336326537323';
-    function checkPw(){
-      var v = document.getElementById('pw-input').value;
-      var encoded = btoa(v).replace(/=/g,'');
-      // simple check: compare against stored hash
-      if(v === atob('c2xhLXRyYWNrZXI=')){
-        document.getElementById('pw-gate').style.display='none';
-        sessionStorage.setItem('wrt_auth','1');
-      } else {
-        var el = document.getElementById('pw-error');
-        el.textContent = 'Incorrect password. Try again.';
-        document.getElementById('pw-input').value='';
-        document.getElementById('pw-input').focus();
-        setTimeout(function(){el.textContent='';},3000);
-      }
-    }
-    window.checkPw = checkPw;
-    if(sessionStorage.getItem('wrt_auth')==='1'){
+(function(){
+  function checkPw(){
+    var v = document.getElementById('pw-input').value;
+    if(v === atob('c2xhLXRyYWNrZXI=')){
       document.getElementById('pw-gate').style.display='none';
+      sessionStorage.setItem('wrt_auth','1');
+    } else {
+      var el = document.getElementById('pw-error');
+      el.textContent = 'Incorrect password. Try again.';
+      document.getElementById('pw-input').value='';
+      document.getElementById('pw-input').focus();
+      setTimeout(function(){el.textContent='';},3000);
     }
-  })();
+  }
+  window.checkPw = checkPw;
+  if(sessionStorage.getItem('wrt_auth')==='1'){
+    document.getElementById('pw-gate').style.display='none';
+  }
+})();
 </script>
 
+<!-- HEADER -->
 <div class="header">
   <div>
     <h1>ð¨ #war-room-bp Escalation Tracker</h1>
-    <div class="meta">Jira created + engineering team actively participated Â· Last 7 days Â· Auto-refreshes hourly</div>
+    <div class="meta">Jira created + engineering team actively participated Â· Live from Google Sheets Â· Auto-refreshes every 5 min</div>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
     <span class="pill pill-red" id="hdr-open">â open</span>
@@ -132,16 +152,26 @@
   </div>
 </div>
 
+<!-- MONTH TABS -->
+<div class="month-nav" id="month-nav"></div>
+
+<!-- CARRYOVER BANNER -->
+<div class="carryover-banner" id="carryover-banner">
+  â ï¸ <span id="carryover-text"></span>
+</div>
+
+<!-- STATS -->
 <div class="summary">
   <div class="stat red"><div class="label">Unresolved</div><div class="value" id="s-open">â</div></div>
   <div class="stat green"><div class="label">Resolved</div><div class="value" id="s-res">â</div></div>
   <div class="stat"><div class="label">Total</div><div class="value" id="s-total">â</div></div>
   <div class="stat"><div class="label">Avg Resolve</div><div class="value" id="s-avg">â</div></div>
   <div class="stat orange"><div class="label">Oldest Open</div><div class="value" id="s-oldest">â</div></div>
-  <div class="stat orange"><div class="label">Waiting on Eng</div><div class="value" id="s-eng">â</div></div>
-  <div class="stat"><div class="label">Waiting on CS</div><div class="value" id="s-cs">â</div></div>
+  <div class="stat orange"><div class="label">Waiting Eng</div><div class="value" id="s-eng">â</div></div>
+  <div class="stat"><div class="label">Waiting CS</div><div class="value" id="s-cs">â</div></div>
 </div>
 
+<!-- CONTROLS -->
 <div class="controls">
   <button class="filter-btn active" data-filter="all">All</button>
   <button class="filter-btn" data-filter="unresolved">Unresolved</button>
@@ -150,10 +180,11 @@
   <button class="filter-btn" data-filter="cs">Waiting on CS</button>
   <button class="filter-btn" data-filter="customer">Waiting on Customer</button>
   <span class="spacer"></span>
-  <span class="refresh-note" id="refresh-note">Updated: â</span>
+  <span class="refresh-note" id="refresh-note" onclick="loadData()" title="Click to refresh">Updated: â</span>
   <input id="search" type="text" placeholder="ð  Search ticket, personâ¦" oninput="render()">
 </div>
 
+<!-- TABLE -->
 <div class="table-wrap">
   <table>
     <thead>
@@ -169,180 +200,303 @@
         <th>Last Comment</th>
       </tr>
     </thead>
-    <tbody id="tbody"></tbody>
+    <tbody id="tbody"><tr><td colspan="9" class="loading">Loading data from Google Sheetsâ¦</td></tr></tbody>
   </table>
 </div>
 
 <script>
-const data = [
-  {
-    ticket:"CSES-1836", url:"https://getflex.atlassian.net/browse/CSES-1836",
-    escalator:"Lily Lam", engineering:["Oliver Carlson","Hafiz Aina"],
-    escalatedAt:new Date("2026-05-20T15:42:00Z"), lastUpdate:new Date("2026-05-20T19:17:00Z"),
-    status:"resolved", resolvedAt:new Date("2026-05-20T19:17:00Z"), waiting:"n/a",
-    lastCommenter:"Lily Lam", lastCommentRole:"cs",
-    lastComment:"Looping in compliance to see how we should respond and if we can apply a fraudster tag.",
-    summary:"BBB complaint â customer claims April charge not found in records"
-  },
-  {
-    ticket:"CSES-1837", url:"https://getflex.atlassian.net/browse/CSES-1837",
-    escalator:"Jean Caba", engineering:["Jin Li","Reilly Keating"],
-    escalatedAt:new Date("2026-05-20T16:14:00Z"), lastUpdate:new Date("2026-05-26T16:17:00Z"),
-    status:"unresolved", resolvedAt:null, waiting:"customer",
-    lastCommenter:"Jean Caba", lastCommentRole:"cs",
-    lastComment:"Got it, let me inform the resident. (Property needs to fix unit State address with AppFolio.)",
-    summary:"Resident not eligible via AppFolio Embed â malformed property data"
-  },
-  {
-    ticket:"CSES-1838", url:"https://getflex.atlassian.net/browse/CSES-1838",
-    escalator:"Alexis Torres", engineering:["Nick Krzysiak","Chase Bullock","Jin Li","Patrick Spencer","Steven Karijolich"],
-    escalatedAt:new Date("2026-05-20T20:09:00Z"), lastUpdate:new Date("2026-05-26T22:28:00Z"),
-    status:"resolved", resolvedAt:new Date("2026-05-26T22:28:00Z"), waiting:"n/a",
-    lastCommenter:"Steven Karijolich", lastCommentRole:"eng",
-    lastComment:"Traced it down â we have two active properties mapped to generic fallback. User should be good to try again ð",
-    summary:"Onboarding error â null address on generic Yardi property 354013"
-  },
-  {
-    ticket:"CSES-1840", url:"https://getflex.atlassian.net/browse/CSES-1840",
-    escalator:"Emma Shields", engineering:["Lisa Rosselli"],
-    escalatedAt:new Date("2026-05-22T14:11:00Z"), lastUpdate:new Date("2026-05-22T14:28:00Z"),
-    status:"resolved", resolvedAt:new Date("2026-05-22T14:28:00Z"), waiting:"n/a",
-    lastCommenter:"Emma Shields", lastCommentRole:"cs",
-    lastComment:"Ah this is probably another ACH case â I will let the agent know. Thanks for checking!",
-    summary:"Unable to withdraw customer Flex Funds â ACH issue"
-  },
-  {
-    ticket:"CSES-1841", url:"https://getflex.atlassian.net/browse/CSES-1841",
-    escalator:"Alexis Torres", engineering:["Nick Krzysiak","Larry Wainwright","Hector Bastida","Steven Karijolich"],
-    escalatedAt:new Date("2026-05-22T14:21:00Z"), lastUpdate:new Date("2026-05-26T14:30:00Z"),
-    status:"unresolved", resolvedAt:null, waiting:"eng",
-    lastCommenter:"Hector Bastida", lastCommentRole:"eng",
-    lastComment:"Mmmm we don't, but there might be an edge case where the token is cached in the browser because it's the same subdomain.",
-    summary:"Embed onboarding stuck â ConnectBillerCommand token expired edge case"
-  },
-  {
-    ticket:"CSES-1842", url:"https://getflex.atlassian.net/browse/CSES-1842",
-    escalator:"Emma Shields", engineering:["Parth Desai","Brandon Lerner","Matt Wilfert"],
-    escalatedAt:new Date("2026-05-22T14:34:00Z"), lastUpdate:new Date("2026-05-26T13:42:00Z"),
-    status:"resolved", resolvedAt:new Date("2026-05-26T13:41:00Z"), waiting:"n/a",
-    lastCommenter:"Parth Desai", lastCommentRole:"eng",
-    lastComment:"Issue resolved â flag was baselined in Amplitude too early, team is looking into comms now.",
-    summary:"RP reschedule capped at 25th â rxp-crime-71 experiment flag (~50k users impacted)"
-  },
-  {
-    ticket:"CSES-1843", url:"https://getflex.atlassian.net/browse/CSES-1843",
-    escalator:"Kayla Bentley", engineering:["Tong Sun","Larry Wainwright"],
-    escalatedAt:new Date("2026-05-22T14:40:00Z"), lastUpdate:new Date("2026-05-26T21:53:00Z"),
-    status:"unresolved", resolvedAt:null, waiting:"cs",
-    lastCommenter:"Larry Wainwright", lastCommentRole:"eng",
-    lastComment:"Long-standing issue â pricing offer locked to old contract type. Can call refreshOffer but we shouldn't without notifying the user of upcoming MMF charges.",
-    summary:"MMF never charged since Jun 2024 â pricing offer locked to old contract type"
-  },
-  {
-    ticket:"CSES-1845", url:"https://getflex.atlassian.net/browse/CSES-1845",
-    escalator:"Kimberly Donlin", engineering:["Jason Truong"],
-    escalatedAt:new Date("2026-05-22T19:54:00Z"), lastUpdate:new Date("2026-05-23T19:29:00Z"),
-    status:"resolved", resolvedAt:new Date("2026-05-23T00:00:00Z"), waiting:"n/a",
-    lastCommenter:"Jason Truong", lastCommentRole:"eng",
-    lastComment:"Gotchu! (Stripe undeleted the account and is investigating why it was auto-deleted.)",
-    summary:"User deleted in Stripe automatically â Stripe restored the account"
-  },
-  {
-    ticket:"CSES-1847", url:"https://getflex.atlassian.net/browse/CSES-1847",
-    escalator:"Emma Shields", engineering:["Jason Truong","Frank Pham","Devin Saiki"],
-    escalatedAt:new Date("2026-05-22T20:38:00Z"), lastUpdate:new Date("2026-05-27T13:55:00Z"),
-    status:"unresolved", resolvedAt:null, waiting:"cs",
-    lastCommenter:"Devin Saiki", lastCommentRole:"eng",
-    lastComment:"They were in the DDA incident â VC was activated for them, repayment failed on 5/19. User can't make manual payment. Can we process the repayment manually?",
-    summary:"App shows user didn't use Flex for May â DDA incident VC activation edge case"
-  },
-  {
-    ticket:"CSES-1848", url:"https://getflex.atlassian.net/browse/CSES-1848",
-    escalator:"Kayla Bentley", engineering:["Nick Krzysiak","Parth Desai","Lisa Rosselli","Edie Ye"],
-    escalatedAt:new Date("2026-05-22T21:58:00Z"), lastUpdate:new Date("2026-05-26T17:37:00Z"),
-    status:"unresolved", resolvedAt:null, waiting:"eng",
-    lastCommenter:"Edie Ye", lastCommentRole:"eng",
-    lastComment:"It's calculated on the fly and should be part of onboarding, so user should have seen the screen prior to their onboarding confirmation?",
-    summary:"Onboarding welcome email not sent â MMF missing from payment status (~96/day)"
-  },
-  {
-    ticket:"CSES-1852", url:"https://getflex.atlassian.net/browse/CSES-1852",
-    escalator:"Kimberly Donlin", engineering:["Rafiul Rafsan"],
-    escalatedAt:new Date("2026-05-26T14:26:00Z"), lastUpdate:new Date("2026-05-26T16:05:00Z"),
-    status:"unresolved", resolvedAt:null, waiting:"eng",
-    lastCommenter:"Kimberly Donlin", lastCommentRole:"cs",
-    lastComment:"Trying in the Flex Rent tab â Biller â Manage â Switch FA payment method. Switch shows success but remains on DDA.",
-    summary:"VC not available in app â card not provisioned; OD switch not persisting"
-  },
-  {
-    ticket:"CSES-1854", url:"https://getflex.atlassian.net/browse/CSES-1854",
-    escalator:"Kimberly Donlin", engineering:["Matt Wilfert"],
-    escalatedAt:new Date("2026-05-26T14:52:00Z"), lastUpdate:new Date("2026-05-26T15:53:00Z"),
-    status:"resolved", resolvedAt:new Date("2026-05-26T15:53:00Z"), waiting:"n/a",
-    lastCommenter:"Matt Wilfert", lastCommentRole:"eng",
-    lastComment:"Should be good now. â",
-    summary:"Product canceled / offer accepted mismatch â biller account restored"
-  },
-  {
-    ticket:"CSES-1855", url:"https://getflex.atlassian.net/browse/CSES-1855",
-    escalator:"Emma Shields", engineering:["Matt Wilfert"],
-    escalatedAt:new Date("2026-05-26T15:00:00Z"), lastUpdate:new Date("2026-05-26T15:02:00Z"),
-    status:"resolved", resolvedAt:new Date("2026-05-26T15:02:00Z"), waiting:"n/a",
-    lastCommenter:"Matt Wilfert", lastCommentRole:"eng",
-    lastComment:"Try now. â",
-    summary:"Unable to update user email â Firebase duplicate resolved"
-  },
-  {
-    ticket:"CSES-1858", url:"https://getflex.atlassian.net/browse/CSES-1858",
-    escalator:"Kameron Reeves", engineering:["Zach Schulz"],
-    escalatedAt:new Date("2026-05-26T16:22:00Z"), lastUpdate:new Date("2026-05-27T14:37:00Z"),
-    status:"unresolved", resolvedAt:null, waiting:"cs",
-    lastCommenter:"Zach Schulz", lastCommentRole:"eng",
-    lastComment:"Issue is unit number format â if user sets it to '1332-A,B' instead of '1332-A', we should match on the correct lease.",
-    summary:"P2P cannot relink to Embed â duplicate Entrata profiles (unit format mismatch)"
-  },
-  {
-    ticket:"CSES-1862", url:"https://getflex.atlassian.net/browse/CSES-1862",
-    escalator:"Kameron Reeves", engineering:["Parth Desai","Sydney Bullard"],
-    escalatedAt:new Date("2026-05-26T16:55:00Z"), lastUpdate:new Date("2026-05-27T14:35:00Z"),
-    status:"unresolved", resolvedAt:null, waiting:"eng",
-    lastCommenter:"Sydney Bullard", lastCommentRole:"eng",
-    lastComment:"The Flexie diagnosis is correct â destructive CTA fires on 'scheduled' payment, not just 'in-flight'. Fix needed.",
-    summary:"Autopay modal misleading copy â CTA fires before BP payment is actually in flight"
-  },
-  {
-    ticket:"CSES-1863", url:"https://getflex.atlassian.new/browse/CSES-1863",
-    escalator:"Alexis Torres", engineering:["Matt Wilfert"],
-    escalatedAt:new Date("2026-05-26T18:21:00Z"), lastUpdate:new Date("2026-05-26T18:31:00Z"),
-    status:"resolved", resolvedAt:new Date("2026-05-26T18:31:00Z"), waiting:"n/a",
-    lastCommenter:"Alexis Torres", lastCommentRole:"cs",
-    lastComment:"Okay I'll try. (No Firebase/user_account record â customer asked to re-onboard.)",
-    summary:"Deleted account â no data to restore, customer asked to re-onboard"
-  },
-  {
-    ticket:"CSES-1865", url:"https://getflex.atlassian.net/browse/CSES-1865",
-    escalator:"Winter Beaudry", engineering:["Larry Wainwright","Nick Krzysiak","Ajit Janardhanan"],
-    escalatedAt:new Date("2026-05-26T18:52:00Z"), lastUpdate:new Date("2026-05-26T20:37:00Z"),
-    status:"unresolved", resolvedAt:null, waiting:"eng",
-    lastCommenter:"Chelsea Bennett", lastCommentRole:"cs",
-    lastComment:"There's no history of a DP attempt on our end â it failed before that. ð¤ ",
-    summary:"Two active statuses (Split Rent + Move-In) â Move-In FF payment failed due to DB lock"
-  },
-  {
-    ticket:"CSES-1867", url:"https://getflex.atlassian.net/browse/CSES-1867",
-    escalator:"Kameron Reeves", engineering:["Lisa Rosselli"],
-    escalatedAt:new Date("2026-05-26T21:31:00Z"), lastUpdate:new Date("2026-05-26T21:35:00Z"),
-    status:"resolved", resolvedAt:new Date("2026-05-26T21:35:00Z"), waiting:"n/a",
-    lastCommenter:"Lisa Rosselli", lastCommentRole:"eng",
-    lastComment:"Fast refund initiated. â",
-    summary:"Flex funds won't withdraw â fast refund initiated"
-  }
-];
+// âââ CONFIG âââââââââââââââââââââââââââââââââââââââââââââââ
+const SHEET_ID = '1bKNx2OhmXbWOy_z2d38c7gH-TIVNH5lm4lahkRyF5AY';
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
+// âââ STATE ââââââââââââââââââââââââââââââââââââââââââââââââ
+let allData = [];
+let activeMonthTab = 'active';
 let currentFilter = 'all';
 let sortCol = 'escalatedAt';
 let sortDir = 'desc';
 
+// âââ CSV PARSING ââââââââââââââââââââââââââââââââââââââââââ
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+function parseCSV(text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]).map(h => h.replace(/^"|"$/g, ''));
+  return lines.slice(1).map(line => {
+    const vals = parseCSVLine(line).map(v => v.replace(/^"|"$/g, ''));
+    const row = {};
+    headers.forEach((h, i) => row[h] = vals[i] || '');
+    return row;
+  });
+}
+
+// âââ DATE PARSING âââââââââââââââââââââââââââââââââââââââââ
+// Input: "2026-05-20 11:42 AM" (EDT)
+function parseDate(str) {
+  if (!str || !str.trim()) return null;
+  const m = str.match(/(\d{4})-(\d{2})-(\d{2})\s+(\d+):(\d+)\s+(AM|PM)/i);
+  if (!m) return null;
+  let h = parseInt(m[4]), min = parseInt(m[5]);
+  if (m[6].toUpperCase() === 'PM' && h !== 12) h += 12;
+  if (m[6].toUpperCase() === 'AM' && h === 12) h = 0;
+  // EDT = UTC-4; store as UTC for correct elapsed calculation
+  return new Date(Date.UTC(+m[1], +m[2]-1, +m[3], h+4, min));
+}
+
+// âââ NORMALIZE DATA âââââââââââââââââââââââââââââââââââââââ
+function normalizeRow(r) {
+  const waiting = (r['Waiting On'] || '').toLowerCase();
+  let waitingNorm = 'n/a';
+  if (waiting === 'engineering') waitingNorm = 'eng';
+  else if (waiting === 'cs team') waitingNorm = 'cs';
+  else if (waiting === 'customer') waitingNorm = 'customer';
+
+  return {
+    month: r['Month'] || '',
+    ticket: r['Jira Ticket'] || '',
+    url: r['Jira URL'] || '',
+    summary: r['Summary'] || '',
+    escalator: r['Who Escalated'] || '',
+    engineering: (r['Engineering Tagged'] || '').split(',').map(s => s.trim()).filter(Boolean),
+    escalatedAt: parseDate(r['Escalated At (EDT)']),
+    lastUpdate: parseDate(r['Last Update (EDT)']),
+    status: (r['Status'] || '').toLowerCase(),
+    waiting: waitingNorm,
+    resolvedAt: parseDate(r['Resolved At (EDT)']),
+    resolveInfo: r['Resolve Time / Hrs Open'] || '',
+    lastCommenter: r['Last Commenter'] || '',
+    lastComment: r['Last Comment'] || '',
+  };
+}
+
+// âââ CURRENT MONTH ââââââââââââââââââââââââââââââââââââââââ
+function getCurrentMonth() {
+  return new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' }); // "May 2026"
+}
+
+function getMonthOrder(monthStr) {
+  // Returns a sortable number for a month string like "May 2026"
+  const d = new Date(monthStr + ' 1');
+  return isNaN(d) ? 0 : d.getTime();
+}
+
+// âââ LOAD DATA ââââââââââââââââââââââââââââââââââââââââââââ
+async function loadData() {
+  try {
+    const resp = await fetch(CSV_URL + '&t=' + Date.now());
+    const text = await resp.text();
+    const raw = parseCSV(text);
+    allData = raw.map(normalizeRow).filter(r => r.ticket);
+    renderMonthTabs();
+    render();
+    document.getElementById('refresh-note').textContent = 'Updated: ' +
+      new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) + ' Â· Click to refresh';
+  } catch (e) {
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="9" class="empty">â ï¸ Could not load data. Make sure the Sheet is shared publicly. (${e.message})</td></tr>`;
+  }
+}
+
+// âââ MONTH TABS âââââââââââââââââââââââââââââââââââââââââââ
+function renderMonthTabs() {
+  const currentMonth = getCurrentMonth();
+  const months = [...new Set(allData.map(r => r.month))].filter(Boolean)
+    .sort((a, b) => getMonthOrder(a) - getMonthOrder(b));
+
+  // Count carryover (unresolved from past months)
+  const carryoverCount = allData.filter(r => r.month !== currentMonth && r.status === 'unresolved').length;
+
+  let html = `<div class="month-tab ${activeMonthTab === 'active' ? 'active' : ''}" onclick="setMonthTab('active')">
+    ð´ Active${carryoverCount > 0 ? `<span class="carryover-dot"></span>` : ''}
+  </div>`;
+
+  months.forEach(m => {
+    const isCurrentMonth = m === currentMonth;
+    const label = isCurrentMonth ? `${m} (current)` : m;
+    html += `<div class="month-tab ${activeMonthTab === m ? 'active' : ''}" onclick="setMonthTab('${m}')">${label}</div>`;
+  });
+
+  document.getElementById('month-nav').innerHTML = html;
+}
+
+function setMonthTab(tab) {
+  activeMonthTab = tab;
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+  document.getElementById('search').value = '';
+  renderMonthTabs();
+  render();
+}
+
+// âââ GET VIEW DATA ââââââââââââââââââââââââââââââââââââââââ
+function getViewData() {
+  const currentMonth = getCurrentMonth();
+  if (activeMonthTab === 'active') {
+    // All tickets from current month + unresolved from previous months
+    return allData.filter(r => r.month === currentMonth || r.status === 'unresolved');
+  } else {
+    return allData.filter(r => r.month === activeMonthTab);
+  }
+}
+
+// âââ FORMATTING âââââââââââââââââââââââââââââââââââââââââââ
+function fmt(d) {
+  if (!d) return 'â';
+  return d.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'America/New_York' }) + ' EDT';
+}
+function elapsed(d) {
+  if (!d) return '';
+  const ms = Date.now() - d.getTime();
+  const m = Math.floor(ms / 60000);
+  if (m < 60) return m + 'm ago';
+  const h = ms / 3600000;
+  if (h < 24) return h.toFixed(1) + 'h ago';
+  const days = Math.floor(h/24), rem = Math.round(h%24);
+  return `${days}d ${rem}h ago`;
+}
+function duration(a, b) {
+  if (!a || !b) return '';
+  const h = Math.abs(b - a) / 3600000;
+  if (h < 0.1) return Math.round(Math.abs(b-a)/60000)+'min';
+  if (h < 24) return h.toFixed(1)+'h';
+  const d = Math.floor(h/24), r = Math.round(h%24);
+  return `${d}d ${r}h`;
+}
+function hrsOpen(d) { return d ? Math.round((Date.now() - d.getTime()) / 3600000) : 0; }
+function hrsBadge(h) {
+  if (h > 72) return `<span class="hrs-badge hrs-critical">${h}h open</span>`;
+  if (h > 24) return `<span class="hrs-badge hrs-warn">${h}h open</span>`;
+  return `<span class="hrs-badge hrs-ok">${h}h open</span>`;
+}
+function waitingBadge(w) {
+  if (w === 'eng') return `<span class="waiting-badge waiting-eng">â¡ï¸ Engineering</span>`;
+  if (w === 'cs') return `<span class="waiting-badge waiting-cs">ð¤ CS Team</span>`;
+  if (w === 'customer') return `<span class="waiting-badge waiting-customer">ð Customer</span>`;
+  return `<span class="waiting-badge waiting-na">â</span>`;
+}
+
+// âââ RENDER âââââââââââââââââââââââââââââââââââââââââââââââ
+function render() {
+  const currentMonth = getCurrentMonth();
+  const q = document.getElementById('search').value.toLowerCase();
+  let rows = getViewData().filter(e => {
+    if (currentFilter === 'unresolved' && e.status !== 'unresolved') return false;
+    if (currentFilter === 'resolved' && e.status !== 'resolved') return false;
+    if (currentFilter === 'eng' && e.waiting !== 'eng') return false;
+    if (currentFilter === 'cs' && e.waiting !== 'cs') return false;
+    if (currentFilter === 'customer' && e.waiting !== 'customer') return false;
+    if (q) {
+      const hay = [e.ticket, e.escalator, e.engineering.join(' '), e.summary, e.lastComment, e.lastCommenter, e.month].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // Sort
+  rows.sort((a, b) => {
+    let va, vb;
+    if (sortCol === 'ticket') { va = a.ticket; vb = b.ticket; }
+    else if (sortCol === 'escalator') { va = a.escalator; vb = b.escalator; }
+    else if (sortCol === 'engineering') { va = a.engineering[0]||''; vb = b.engineering[0]||''; }
+    else if (sortCol === 'escalatedAt') { va = a.escalatedAt?.getTime()||0; vb = b.escalatedAt?.getTime()||0; }
+    else if (sortCol === 'lastUpdate') { va = a.lastUpdate?.getTime()||0; vb = b.lastUpdate?.getTime()||0; }
+    else if (sortCol === 'status') { va = a.status; vb = b.status; }
+    else if (sortCol === 'waiting') { va = a.waiting; vb = b.waiting; }
+    else if (sortCol === 'sla') {
+      va = a.resolvedAt ? (a.resolvedAt - a.escalatedAt) : (Date.now() - (a.escalatedAt?.getTime()||0));
+      vb = b.resolvedAt ? (b.resolvedAt - b.escalatedAt) : (Date.now() - (b.escalatedAt?.getTime()||0));
+    }
+    if (va < vb) return sortDir === 'asc' ? -1 : 1;
+    if (va > vb) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  // Carryover banner
+  if (activeMonthTab === 'active') {
+    const carryover = rows.filter(r => r.month !== currentMonth);
+    const banner = document.getElementById('carryover-banner');
+    if (carryover.length > 0) {
+      document.getElementById('carryover-text').textContent =
+        `${carryover.length} unresolved ticket${carryover.length > 1 ? 's' : ''} carried over from previous month${carryover.length > 1 ? 's' : ''} â highlighted below`;
+      banner.classList.add('show');
+    } else {
+      banner.classList.remove('show');
+    }
+  } else {
+    document.getElementById('carryover-banner').classList.remove('show');
+  }
+
+  const tbody = document.getElementById('tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">No escalations match your filter.</td></tr>';
+    updateStats([]);
+    return;
+  }
+
+  tbody.innerHTML = rows.map(e => {
+    const isRes = e.status === 'resolved';
+    const isCarryover = activeMonthTab === 'active' && e.month !== currentMonth;
+    const hrs = e.escalatedAt ? hrsOpen(e.escalatedAt) : 0;
+    const slaCell = isRes
+      ? (e.resolvedAt
+          ? `<div class="time-main">${fmt(e.resolvedAt)}</div><div class="time-sub">Resolved in ${duration(e.escalatedAt, e.resolvedAt)}</div>`
+          : `<div class="time-sub">${e.resolveInfo || 'â'}</div>`)
+      : hrsBadge(hrs);
+    const engHtml = e.engineering.map(n => `<span class="eng-tag">${n}</span>`).join('');
+    const monthBadge = isCarryover ? `<div class="carryover-tag">â© from ${e.month}</div>` : '';
+
+    return `<tr class="${isCarryover ? 'carryover-row' : ''}">
+      <td><a href="${e.url}" target="_blank" class="ticket-link">${e.ticket}</a><div class="summary-text">${e.summary}</div>${monthBadge}</td>
+      <td><span class="escalator-name">${e.escalator}</span></td>
+      <td><div class="eng-list">${engHtml}</div></td>
+      <td><div class="time-main">${fmt(e.escalatedAt)}</div><div class="time-sub">${elapsed(e.escalatedAt)}</div></td>
+      <td><div class="time-main">${fmt(e.lastUpdate)}</div><div class="time-sub">${elapsed(e.lastUpdate)}</div></td>
+      <td><span class="status-badge ${isRes ? 'status-resolved' : 'status-unresolved'}"><span class="dot ${isRes ? 'dot-green' : 'dot-red'}"></span>${isRes ? 'Resolved' : 'Unresolved'}</span></td>
+      <td>${waitingBadge(e.waiting)}</td>
+      <td>${slaCell}</td>
+      <td><div class="last-comment"><div class="commenter">${e.lastCommenter}</div><div class="text">"${e.lastComment}"</div></div></td>
+    </tr>`;
+  }).join('');
+
+  updateStats(rows);
+}
+
+function updateStats(rows) {
+  const open = rows.filter(e => e.status === 'unresolved').length;
+  const res = rows.filter(e => e.status === 'resolved').length;
+  const total = rows.length;
+  const eng = rows.filter(e => e.waiting === 'eng').length;
+  const cs = rows.filter(e => e.waiting === 'cs').length;
+  const resolved = rows.filter(e => e.resolvedAt && e.escalatedAt);
+  const avgH = resolved.length ? resolved.reduce((s,e) => s + (e.resolvedAt - e.escalatedAt), 0) / resolved.length / 3600000 : 0;
+  const oldest = rows.filter(e => e.status === 'unresolved' && e.escalatedAt).reduce((m,e) => Math.max(m, hrsOpen(e.escalatedAt)), 0);
+
+  document.getElementById('s-open').textContent = open;
+  document.getElementById('s-res').textContent = res;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-avg').textContent = avgH ? (avgH < 24 ? avgH.toFixed(1)+'h' : (avgH/24).toFixed(1)+'d') : 'â';
+  document.getElementById('s-oldest').textContent = oldest ? oldest+'h' : 'â';
+  document.getElementById('s-eng').textContent = eng;
+  document.getElementById('s-cs').textContent = cs;
+  document.getElementById('hdr-open').textContent = open + ' open';
+  document.getElementById('hdr-resolved').textContent = res + ' resolved';
+  document.getElementById('hdr-total').textContent = total + ' total';
+}
+
+// âââ EVENTS âââââââââââââââââââââââââââââââââââââââââââââââ
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     currentFilter = btn.dataset.filter;
@@ -363,123 +517,9 @@ document.querySelectorAll('th[data-col]').forEach(th => {
   });
 });
 
-function fmt(d) {
-  if (!d) return 'â';
-  return d.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'America/New_York' }) + ' EDT';
-}
-function elapsed(d) {
-  const ms = Date.now() - d;
-  const m = Math.floor(ms/60000);
-  if (m < 60) return m + 'm ago';
-  const h = ms/3600000;
-  if (h < 24) return h.toFixed(1) + 'h ago';
-  const days = Math.floor(h/24), rem = Math.round(h%24);
-  return `${days}d ${rem}h ago`;
-}
-function duration(a, b) {
-  const h = Math.abs(b-a)/3600000;
-  if (h < 0.1) return Math.round(Math.abs(b-a)/60000)+'min';
-  if (h < 24) return h.toFixed(1)+'h';
-  const d = Math.floor(h/24), r = Math.round(h%24);
-  return `${d}d ${r}h`;
-}
-function hrsOpen(d) { return Math.round((Date.now()-d)/3600000); }
-function hrsBadge(h) {
-  if (h > 72) return `<span class="hrs-badge hrs-critical">${h}h open</span>`;
-  if (h > 24) return `<span class="hrs-badge hrs-warn">${h}h open</span>`;
-  return `<span class="hrs-badge hrs-ok">${h}h open</span>`;
-}
-function waitingBadge(w) {
-  if (w === 'eng') return `<span class="waiting-badge waiting-eng">âï¸ Engineering</span>`;
-  if (w === 'cs') return `<span class="waiting-badge waiting-cs">ð¤ CS Team</span>`;
-  if (w === 'customer') return `<span class="waiting-badge waiting-customer">ð Customer</span>`;
-  return `<span class="waiting-badge waiting-na">â</span>`;
-}
-
-function render() {
-  const q = document.getElementById('search').value.toLowerCase();
-  let rows = data.filter(e => {
-    if (currentFilter === 'unresolved' && e.status !== 'unresolved') return false;
-    if (currentFilter === 'resolved' && e.status !== 'resolved') return false;
-    if (currentFilter === 'eng' && e.waiting !== 'eng') return false;
-    if (currentFilter === 'cs' && e.waiting !== 'cs') return false;
-    if (currentFilter === 'customer' && e.waiting !== 'customer') return false;
-    if (q) {
-      const hay = [e.ticket, e.escalator, e.engineering.join(' '), e.summary, e.lastComment, e.lastCommenter].join(' ').toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
-    return true;
-  });
-
-  rows.sort((a, b) => {
-    let va, vb;
-    if (sortCol==='ticket') { va=a.ticket; vb=b.ticket; }
-    else if (sortCol==='escalator') { va=a.escalator; vb=b.escalator; }
-    else if (sortCol==='engineering') { va=a.engineering[0]||''; vb=b.engineering[0]||''; }
-    else if (sortCol==='escalatedAt') { va=a.escalatedAt.getTime(); vb=b.escalatedAt.getTime(); }
-    else if (sortCol==='lastUpdate') { va=a.lastUpdate.getTime(); vb=b.lastUpdate.getTime(); }
-    else if (sortCol==='status') { va=a.status; vb=b.status; }
-    else if (sortCol==='waiting') { va=a.waiting; vb=b.waiting; }
-    else if (sortCol==='sla') {
-      va = a.resolvedAt ? (a.resolvedAt-a.escalatedAt) : (Date.now()-a.escalatedAt);
-      vb = b.resolvedAt ? (b.resolvedAt-b.escalatedAt) : (Date.now()-b.escalatedAt);
-    }
-    if (va<vb) return sortDir==='asc'?-1:1;
-    if (va>vb) return sortDir==='asc'?1:-1;
-    return 0;
-  });
-
-  const tbody = document.getElementById('tbody');
-  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty">No escalations match your filter.</td></tr>'; updateStats(); return; }
-
-  tbody.innerHTML = rows.map(e => {
-    const hrs = hrsOpen(e.escalatedAt);
-    const isRes = e.status === 'resolved';
-    const slaCell = isRes
-      ? `<div class="time-main">${fmt(e.resolvedAt)}</div><div class="time-sub">Resolved in ${duration(e.escalatedAt,e.resolvedAt)}</div>`
-      : hrsBadge(hrs);
-    const engHtml = e.engineering.map(n=>`<span class="eng-tag">${n}</span>`).join('');
-    return `<tr>
-      <td><a href="${e.url}" target="_blank" class="ticket-link">${e.ticket}</a><div class="summary-text">${e.summary}</div></td>
-      <td><span class="escalator-name">${e.escalator}</span></td>
-      <td><div class="eng-list">${engHtml}</div></td>
-      <td><div class="time-main">${fmt(e.escalatedAt)}</div><div class="time-sub">${elapsed(e.escalatedAt)}</div></td>
-      <td><div class="time-main">${fmt(e.lastUpdate)}</div><div class="time-sub">${elapsed(e.lastUpdate)}</div></td>
-      <td><span class="status-badge ${isRes?'status-resolved':'status-unresolved'}"><span class="dot ${isRes?'dot-green':'dot-red'}"></span>${isRes?'Resolved':'Unresolved'}</span></td>
-      <td>${waitingBadge(e.waiting)}</td>
-      <td>${slaCell}</td>
-      <td><div class="last-comment"><div class="commenter">${e.lastCommenter}</div><div class="text">"${e.lastComment}"</div></div></td>
-    </tr>`;
-  }).join('');
-
-  updateStats();
-  document.getElementById('refresh-note').textContent = 'Updated: ' + new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-}
-
-function updateStats() {
-  const open = data.filter(e=>e.status==='unresolved').length;
-  const res = data.filter(e=>e.status==='resolved').length;
-  const total = data.length;
-  const eng = data.filter(e=>e.waiting==='eng').length;
-  const cs = data.filter(e=>e.waiting==='cs').length;
-  const resolved = data.filter(e=>e.resolvedAt);
-  const avgH = resolved.length ? resolved.reduce((s,e)=>s+(e.resolvedAt-e.escalatedAt),0)/resolved.length/3600000 : 0;
-  const oldest = data.filter(e=>e.status==='unresolved').reduce((m,e)=>Math.max(m,hrsOpen(e.escalatedAt)),0);
-
-  document.getElementById('s-open').textContent = open;
-  document.getElementById('s-res').textContent = res;
-  document.getElementById('s-total').textContent = total;
-  document.getElementById('s-avg').textContent = avgH ? (avgH<24?avgH.toFixed(1)+'h':(avgH/24).toFixed(1)+'d') : 'â';
-  document.getElementById('s-oldest').textContent = oldest ? oldest+'h' : 'â';
-  document.getElementById('s-eng').textContent = eng;
-  document.getElementById('s-cs').textContent = cs;
-  document.getElementById('hdr-open').textContent = open+' open';
-  document.getElementById('hdr-resolved').textContent = res+' resolved';
-  document.getElementById('hdr-total').textContent = total+' total';
-}
-
-render();
-setInterval(render, 60000);
+// âââ INIT âââââââââââââââââââââââââââââââââââââââââââââââââ
+loadData();
+setInterval(loadData, 300000); // refresh every 5 minutes
 </script>
 </body>
 </html>
