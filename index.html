@@ -88,6 +88,12 @@ tr.carryover-row:hover td { background: #fef9c3; }
 .jira-closed { background: #dcfce7; color: #16a34a; }
 .jira-unknown { background: #f1f5f9; color: #64748b; }
 
+/* SLACK THREAD LINK */
+.slack-link { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 7px; background: #f3eefa; color: #4A154B; font-size: 11px; font-weight: 600; text-decoration: none; transition: background 0.15s; white-space: nowrap; }
+.slack-link:hover { background: #e8d5f5; }
+.slack-link svg { flex-shrink: 0; }
+.slack-no-link { color: #cbd5e1; font-size: 11px; }
+
 .last-comment { font-size: 11.5px; color: #374151; max-width: 260px; line-height: 1.45; }
 .last-comment .commenter { font-weight: 600; color: #1a1a2e; font-size: 11px; margin-bottom: 2px; }
 .last-comment .text { font-style: italic; color: #4b5563; }
@@ -159,7 +165,7 @@ tr.carryover-row:hover td { background: #fef9c3; }
   </div>
 </div>
 
-<!-- MONHH TABS -->
+<!-- MONTH TABS -->
 <div class="month-nav" id="month-nav"></div>
 
 <!-- CARRYOVER BANNER -->
@@ -208,9 +214,10 @@ tr.carryover-row:hover td { background: #fef9c3; }
         <th data-col="waiting">Waiting On ^</th>
         <th data-col="sla">Resolved At / Hrs Open ^</th>
         <th>Last Comment</th>
+        <th>Slack Thread</th>
       </tr>
     </thead>
-    <tbody id="tbody"><tr><td colspan="10" class="loading">Loading data from Google Sheets...</td></tr></tbody>
+    <tbody id="tbody"><tr><td colspan="11" class="loading">Loading data from Google Sheets...</td></tr></tbody>
   </table>
 </div>
 
@@ -293,6 +300,7 @@ function normalizeRow(r) {
     resolveInfo: r['Resolve Time / Hrs Open'] || '',
     lastCommenter: r['Last Commenter'] || '',
     lastComment: r['Last Comment'] || '',
+    slackUrl: r['Slack Thread'] || '',
   };
 }
 
@@ -322,7 +330,7 @@ async function loadData() {
   } catch (e) {
     if (note) note.textContent = 'Error loading data - click to retry';
     document.getElementById('tbody').innerHTML =
-      '<tr><td colspan="10" class="empty">Could not load data. Make sure the Sheet is shared publicly. (' + e.message + ')</td></tr>';
+      '<tr><td colspan="11" class="empty">Could not load data. Make sure the Sheet is shared publicly. (' + e.message + ')</td></tr>';
   }
 }
 
@@ -465,7 +473,7 @@ function render() {
 
   var tbody = document.getElementById('tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="10" class="empty">No escalations match your filter.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11" class="empty">No escalations match your filter.</td></tr>';
     updateStats([]);
     return;
   }
@@ -493,6 +501,7 @@ function render() {
       '<td>'+waitingBadge(e.waiting)+'</td>' +
       '<td>'+slaCell+'</td>' +
       '<td><div class="last-comment"><div class="commenter">'+e.lastCommenter+'</div><div class="text">&ldquo;'+e.lastComment+'&rdquo;</div></div></td>' +
+      '<td>'+(e.slackUrl ? '<a href="'+e.slackUrl+'" target="_blank" class="slack-link"><svg width="13" height="13" viewBox="0 0 122.8 122.8" xmlns="http://www.w3.org/2000/svg"><path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z" fill="#E01E5A"/><path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/><path d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/><path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z" fill="#ECB22E"/></svg> Open Thread</a>' : '<span class="slack-no-link">&mdash;</span>')+'</td>' +
       '</tr>';
   }).join('');
 
