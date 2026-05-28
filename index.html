@@ -281,7 +281,7 @@ function normalizeRow(r) {
 
   var jiraStatus = (r['Jira Status'] || '').toLowerCase().trim();
   var jiraNorm = 'unknown';
-  if (jiraStatus === 'open') jiraNorm = 'open';
+  if (jiraStatus === 'open' || jiraStatus === 'to do' || jiraStatus === 'in progress') jiraNorm = 'open';
   else if (jiraStatus === 'closed' || jiraStatus === 'done' || jiraStatus === 'resolved') jiraNorm = 'closed';
 
   return {
