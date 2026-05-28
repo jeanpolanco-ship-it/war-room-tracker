@@ -406,9 +406,9 @@ function hrsBadge(h) {
   return '<span class="hrs-badge hrs-ok">'+h+'h open</span>';
 }
 function waitingBadge(w) {
-  if (w === 'eng') return '<span class="waiting-badge waiting-eng">Eng</span>';
-  if (w === 'cs') return '<span class="waiting-badge waiting-cs">CS Team</span>';
-  if (w === 'customer') return '<span class="waiting-badge waiting-customer">Customer</span>';
+  if (w === 'eng') return '<span class="waiting-badge waiting-eng">Waiting on Eng</span>';
+  if (w === 'cs') return '<span class="waiting-badge waiting-cs">Waiting on CS Team</span>';
+  if (w === 'customer') return '<span class="waiting-badge waiting-customer">Waiting on Customer</span>';
   return '<span class="waiting-badge waiting-na">&mdash;</span>';
 }
 function jiraStatusBadge(j) {
