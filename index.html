@@ -281,7 +281,7 @@ function normalizeRow(r) {
 
   var jiraStatus = (r['Jira Status'] || '').toLowerCase().trim();
   var jiraNorm = 'unknown';
-  if (jiraStatus === 'open' || jiraStatus === 'to do' || jiraStatus === 'in progress') jiraNorm = 'open';
+  if (jiraStatus === 'open') jiraNorm = 'open';
   else if (jiraStatus === 'closed' || jiraStatus === 'done' || jiraStatus === 'resolved') jiraNorm = 'closed';
 
   return {
@@ -293,7 +293,7 @@ function normalizeRow(r) {
     engineering: (r['Engineering Tagged'] || '').split(',').map(function(s){ return s.trim(); }).filter(Boolean),
     escalatedAt: parseDate(r['Escalated At (EDT)']),
     lastUpdate: parseDate(r['Last Update (EDT)']),
-    status: (r['Status'] || '').toLowerCase(),
+    status: (function(){ var s = (r['Status'] || '').toLowerCase().trim(); return s === 'open' ? 'unresolved' : s; })(),
     jiraStatus: jiraNorm,
     waiting: waitingNorm,
     resolvedAt: parseDate(r['Resolved At (EDT)']),
@@ -406,9 +406,9 @@ function hrsBadge(h) {
   return '<span class="hrs-badge hrs-ok">'+h+'h open</span>';
 }
 function waitingBadge(w) {
-  if (w === 'eng') return '<span class="waiting-badge waiting-eng">Waiting on Eng</span>';
-  if (w === 'cs') return '<span class="waiting-badge waiting-cs">Waiting on CS Team</span>';
-  if (w === 'customer') return '<span class="waiting-badge waiting-customer">Waiting on Customer</span>';
+  if (w === 'eng') return '<span class="waiting-badge waiting-eng">Eng</span>';
+  if (w === 'cs') return '<span class="waiting-badge waiting-cs">CS Team</span>';
+  if (w === 'customer') return '<span class="waiting-badge waiting-customer">Customer</span>';
   return '<span class="waiting-badge waiting-na">&mdash;</span>';
 }
 function jiraStatusBadge(j) {
