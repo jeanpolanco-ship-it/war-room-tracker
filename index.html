@@ -281,8 +281,8 @@ function normalizeRow(r) {
 
   var jiraStatus = (r['Jira Status'] || '').toLowerCase().trim();
   var jiraNorm = 'unknown';
-  if (jiraStatus === 'open') jiraNorm = 'open';
-  else if (jiraStatus === 'closed' || jiraStatus === 'done' || jiraStatus === 'resolved') jiraNorm = 'closed';
+  if (jiraStatus === 'open' || jiraStatus === 'to do' || jiraStatus === 'in progress' || jiraStatus === 'in review' || jiraStatus === 'todo') jiraNorm = 'open';
+  else if (jiraStatus === 'closed' || jiraStatus === 'done' || jiraStatus === 'resolved' || jiraStatus === 'won\'t do' || jiraStatus === 'duplicate') jiraNorm = 'closed';
 
   return {
     month: r['Month'] || '',
