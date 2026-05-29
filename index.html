@@ -401,7 +401,10 @@ function duration(a, b) {
 }
 function hrsOpen(d) { return d ? Math.round((Date.now() - d.getTime()) / 3600000) : 0; }
 function hrsBadge(h) {
-  var label = h < 1 ? (Math.round(h * 60) + ' min open') : (h + 'h open');
+  var label;
+  if (h < 1) label = Math.round(h * 60) + ' min open';
+  else if (h >= 24) { var d = Math.floor(h/24), r = Math.round(h%24); label = d+'d '+(r > 0 ? r+'h ' : '')+'open'; }
+  else label = h + 'h open';
   if (h > 72) return '<span class="hrs-badge hrs-critical">'+label+'</span>';
   if (h > 24) return '<span class="hrs-badge hrs-warn">'+label+'</span>';
   return '<span class="hrs-badge hrs-ok">'+label+'</span>';
