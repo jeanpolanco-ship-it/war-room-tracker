@@ -527,7 +527,8 @@ function updateStats(rows) {
   document.getElementById('s-res').textContent = res;
   document.getElementById('s-total').textContent = total;
   document.getElementById('s-avg').textContent = avgH ? (avgH < 24 ? avgH.toFixed(1)+'h' : (avgH/24).toFixed(1)+'d') : '--';
-  document.getElementById('s-oldest').textContent = oldest ? oldest+'h' : '--';
+  var oldestLabel = oldest ? (oldest >= 24 ? Math.floor(oldest/24)+'d '+(oldest%24 > 0 ? oldest%24+'h' : '') : oldest+'h') : '--';
+  document.getElementById('s-oldest').textContent = oldestLabel.trim();
   document.getElementById('s-eng').textContent = eng;
   document.getElementById('s-cs').textContent = cs;
   document.getElementById('s-jira-open').textContent = jiraOpen;
