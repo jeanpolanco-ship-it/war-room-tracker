@@ -401,9 +401,10 @@ function duration(a, b) {
 }
 function hrsOpen(d) { return d ? Math.round((Date.now() - d.getTime()) / 3600000) : 0; }
 function hrsBadge(h) {
-  if (h > 72) return '<span class="hrs-badge hrs-critical">'+h+'h open</span>';
-  if (h > 24) return '<span class="hrs-badge hrs-warn">'+h+'h open</span>';
-  return '<span class="hrs-badge hrs-ok">'+h+'h open</span>';
+  var label = h < 1 ? (Math.round(h * 60) + ' min open') : (h + 'h open');
+  if (h > 72) return '<span class="hrs-badge hrs-critical">'+label+'</span>';
+  if (h > 24) return '<span class="hrs-badge hrs-warn">'+label+'</span>';
+  return '<span class="hrs-badge hrs-ok">'+label+'</span>';
 }
 function waitingBadge(w) {
   if (w === 'eng') return '<span class="waiting-badge waiting-eng">Eng</span>';
